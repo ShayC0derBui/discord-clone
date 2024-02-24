@@ -4,14 +4,10 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogTitle,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import axios from "axios";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -21,10 +17,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "../ui/button";
-import { useState, useEffect } from "react";
-import FileUpload from "../file-upload";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import FileUpload from "../file-upload";
+import { Button } from "../ui/button";
+
+
+
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -57,20 +60,22 @@ const InitialModal = () => {
     try {
       await axios.post("/api/servers", values);
       form.reset();
-      router.refresh(); 
+      router.refresh();
       window.location.reload();
     } catch (error) {
       console.log(error);
-    } 
+    }
   };
 
   if (!isMounted) return null;
 
+  
+
   return (
     <Dialog open>
-      <DialogContent className="bg-white text-black p-0 overflow-hidden">
-        <DialogHeader className="pt-8 px-6">
-          <DialogTitle className="text-2xl text-center font-bold">
+      <DialogContent className="overflow-hidden bg-white p-0 text-black">
+        <DialogHeader className="px-6 pt-8">
+          <DialogTitle className="text-center text-2xl font-bold">
             Customize your server
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
@@ -103,13 +108,13 @@ const InitialModal = () => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold text-zinc-50 dark:text-secondary/70">
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-50 dark:text-secondary/70">
                       Server name
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="Enter server name"
                         {...field}
                       ></Input>
@@ -120,7 +125,13 @@ const InitialModal = () => {
               />
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button variant="primary" disabled={isLoading} className="w-full">
+              <Button
+                variant="primary"
+                disabled={
+                  isLoading
+                }
+                className="w-full"
+              >
                 Create
               </Button>
             </DialogFooter>

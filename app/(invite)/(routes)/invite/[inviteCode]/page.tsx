@@ -2,7 +2,6 @@ import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import { MdJavascript } from "react-icons/md";
 
 interface InviteCodePageProps {
   params: {
@@ -20,10 +19,10 @@ const InviteCodePage = async ({ params }: InviteCodePageProps) => {
       inviteCode: params.inviteCode,
       members: {
         some: {
-          profileId: profile.id
-        }
-      }
-    }
+          profileId: profile.id,
+        },
+      },
+    },
   });
 
   if (existingServer) {
@@ -31,22 +30,25 @@ const InviteCodePage = async ({ params }: InviteCodePageProps) => {
   }
 
   const server = await db.server.update({
-    where:{
+    where: {
       inviteCode: params.inviteCode,
     },
     data: {
-      members:{
-        create:[
+      members: {
+        create: [
           {
             profileId: profile.id,
-          }
-        ]
-      }
-    }
-  })
+          },
+        ],
+      },
+    },
+  });
 
-  return <div>Hello Invite</div>;
+  if (server) {
+    return redirect(`/servers/${server.id}`);
+  }
+
+  return null;
 };
 
 export default InviteCodePage;
-

@@ -12,7 +12,6 @@ export const useOrigin = () => {
       ? window.location.origin
       : "";
   
-  
   if (!mounted) return null;
   
   return origin;

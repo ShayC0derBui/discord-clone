@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { ModeToggle } from "../mode-toggle";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
-import NavigationAction from "./navigation-action";
 import { NavigationItem } from "./navigation-item";
+import CreateNewServer from "./navigation-action";
 
 const NavigationSideBar = async () => {
   const profile = await currentProfile();
@@ -27,7 +27,7 @@ const NavigationSideBar = async () => {
 
   return (
     <div className="flex h-full w-full flex-col items-center space-y-4 bg-[#DCDFE3] py-3 text-primary dark:bg-[#1E1F22]">
-      <NavigationAction />
+      <CreateNewServer />
       <Separator className="mx-auto h-[2px] w-10 rounded-md bg-[#BFC3C8] dark:bg-zinc-700" />
       <ScrollArea className="w-full flex-1">
         {servers.map((server) => (
