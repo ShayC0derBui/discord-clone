@@ -5,10 +5,10 @@ import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
 import { redirect } from "next/navigation";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
+import { ServerChannel } from "./server-channel";
 import { ServerHeader } from "./server-header";
 import { ServerSearch } from "./server-search";
 import { ServerSection } from "./server-sections";
-import { ServerChannel } from "./server-channel";
 
 interface ServerSidebarProps {
   serverId: string;
