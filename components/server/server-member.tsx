@@ -31,10 +31,7 @@ export const ServerMember = ({ member, server }: ServermemberProps) => {
         params?.memberId === member.id && "bg-zinc-700/20 dark:bg-zinc-700",
       )}
     >
-      <UserAvatar
-        src={member.profile.imageUrl}
-        className="h-8 w-8 md:m-8 md:h-8"
-      />
+      <UserAvatar src={member.profile.imageUrl} />
       <p
         className={cn(
           "tems-zinc-500 text-sm font-semibold transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300",
