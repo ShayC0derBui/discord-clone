@@ -47,12 +47,12 @@ const formSchema = z.object({
   type: z.nativeEnum(ChannelType),
 });
 
-export const CreateChannelModal = () => {
+export const EditChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
   const params = useParams();
 
-  const isModalOpen = isOpen && type === "createChannel";
+  const isModalOpen = isOpen && type === "editChannel";
   const { channelType } = data;
 
   const form = useForm({
@@ -147,7 +147,10 @@ export const CreateChannelModal = () => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="border-0 bg-zinc-300/50 capitalize text-black outline-none ring-offset-0 focus:ring-0 focus:ring-offset-0">
+                        <SelectTrigger
+                          className="border-0 bg-zinc-300/50 capitalize text-black outline-none 
+                          ring-offset-0 focus:ring-0 focus:ring-offset-0"
+                        >
                           <SelectValue placeholder="Select a channel type" />
                         </SelectTrigger>
                       </FormControl>
@@ -170,7 +173,7 @@ export const CreateChannelModal = () => {
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
               <Button variant="primary" disabled={isLoading} className="w-full">
-                Create
+                Save
               </Button>
             </DialogFooter>
           </form>
