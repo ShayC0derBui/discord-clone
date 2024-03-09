@@ -32,8 +32,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useModal } from "@/hooks/use-modal-store";
-import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z
@@ -50,46 +50,36 @@ const formSchema = z.object({
 export const EditChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
-  const params = useParams();
 
   const isModalOpen = isOpen && type === "editChannel";
-  const { channelType } = data;
+  const { channel, server } = data;
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      type: channelType || ChannelType.TEXT,
+      type: channel?.type || ChannelType.TEXT,
     },
   });
 
   useEffect(() => {
-    if (channelType) {
-      form.setValue("type", channelType);
-    } else {
-      form.setValue("type", ChannelType.TEXT);
+    if (channel) {
+      form.setValue("name", channel.name);
+      form.setValue("type", channel.type);
     }
-  }, [channelType, form]);
-
-  useEffect(() => {
-    if (channelType) {
-      form.setValue("type", channelType);
-    } else {
-      form.setValue("type", ChannelType.TEXT);
-    }
-  }, [channelType, form]);
+  }, [form, channel]);
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const url = qs.stringifyUrl({
-        url: "/api/channels",
+        url: `/api/channels/${channel?.id}`,
         query: {
-          serverId: params?.serverId,
+          serverId: server?.id,
         },
       });
-      await axios.post(url, values);
+      await axios.patch(url, values);
 
       form.reset();
       router.refresh();
@@ -109,7 +99,7 @@ export const EditChannelModal = () => {
       <DialogContent className="overflow-hidden bg-white p-0 text-black">
         <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
-            Create Channel
+            Edit Channel
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -126,7 +116,8 @@ export const EditChannelModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0
+                          focus-visible:ring-offset-0"
                         placeholder="Enter channel name"
                         {...field}
                       ></Input>
@@ -148,8 +139,8 @@ export const EditChannelModal = () => {
                     >
                       <FormControl>
                         <SelectTrigger
-                          className="border-0 bg-zinc-300/50 capitalize text-black outline-none 
-                          ring-offset-0 focus:ring-0 focus:ring-offset-0"
+                          className="border-0 bg-zinc-300/50 capitalize text-black outline-none ring-offset-0
+                            focus:ring-0 focus:ring-offset-0"
                         >
                           <SelectValue placeholder="Select a channel type" />
                         </SelectTrigger>
