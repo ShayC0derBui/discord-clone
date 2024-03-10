@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Member, MemberRole, Profile, Server } from "@prisma/client";
 import { ShieldAlert, ShieldCheck } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { UserAvatar } from "../user-avatar";
+import { UserAvatar } from "@/components/user-avatar";
 
 interface ServermemberProps {
   member: Member & { profile: Profile };
@@ -32,12 +32,12 @@ export const ServerMember = ({ member, server }: ServermemberProps) => {
     <button
       onClick={onClick}
       className={cn(
-        `group mb-1 flex w-full items-center gap-x-2 rounded-md px-2 py-3 transition
+        `group mb-1 flex w-full items-center gap-x-2 rounded-md px-2 py-2 transition
         hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50`,
         params?.memberId === member.id && "bg-zinc-700/20 dark:bg-zinc-700",
       )}
     >
-      <UserAvatar src={member.profile.imageUrl} />
+      <UserAvatar src={member.profile.imageUrl} className="md:h-8 md:w-8" />
       <p
         className={cn(
           `tems-zinc-500 text-sm font-semibold transition group-hover:text-zinc-600

@@ -66,14 +66,17 @@ const ServerSidebar = async ({ serverId }: ServerSidebarProps) => {
   const videoChannels = server?.channels.filter(
     (channel) => channel.type === ChannelType.VIDEO,
   );
-  const members = server?.members;
+  const members = server?.members.filter(
+    (member) => member.profileId !== profile.id,
+  );
 
   if (!server) {
     return redirect("/");
   }
 
-  const role = server.members.find((member) => member.profileId === profile.id)
-    ?.role;
+  const role = server.members.find(
+    (member) => member.profileId === profile.id,
+  )?.role;
 
   return (
     <div className="flex h-full w-full flex-col bg-[#F2F3F5] text-primary dark:bg-[#2B2D31]">
