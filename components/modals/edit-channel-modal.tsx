@@ -115,6 +115,8 @@ export const EditChannelModal = () => {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoSave="off"
+                        autoComplete="off"
                         disabled={isLoading}
                         className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0
                           focus-visible:ring-offset-0"

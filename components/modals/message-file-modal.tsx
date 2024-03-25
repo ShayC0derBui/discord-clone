@@ -16,9 +16,9 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-// import { FileUpload } from "@/components/file-upload";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
+import FileUpload from "../file-upload";
 
 const formSchema = z.object({
   fileUrl: z.string().min(1, {
@@ -88,11 +88,11 @@ export const MessageFileModal = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        {/* <FileUpload */}
-                        {/*   endpoint="messageFile" */}
-                        {/*   value={field.value} */}
-                        {/*   onChange={field.onChange} */}
-                        {/* /> */}
+                        <FileUpload
+                          endpoint="messageFile"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -100,7 +100,7 @@ export const MessageFileModal = () => {
               </div>
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button variant="primary" disabled={isLoading}>
+              <Button variant="primary" disabled={isLoading} className="w-full">
                 Send
               </Button>
             </DialogFooter>

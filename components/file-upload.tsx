@@ -2,13 +2,12 @@
 import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import "@uploadthing/react/styles.css";
-import { X } from "lucide-react";
+import { FileIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Upload } from "lucide-react";
 import { FaCirclePlus } from "react-icons/fa6";
 import { MdPhotoCamera } from "react-icons/md";
-
 
 interface FileUploadProps {
   onChange: (url?: string) => void;
@@ -16,7 +15,6 @@ interface FileUploadProps {
   endpoint: "messageFile" | "serverImage";
   imageLoaded?: boolean;
 }
-
 
 const FileUpload = ({ onChange, value, endpoint }: FileUploadProps) => {
   const [isDropped, setIsDropped] = useState(false);
@@ -62,63 +60,104 @@ const FileUpload = ({ onChange, value, endpoint }: FileUploadProps) => {
     );
   }
 
-
+  if (value && fileType === "pdf") {
+    return (
+      <div className="relative mt-2 flex items-center rounded-md bg-background/10 p-2">
+        <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
+        <a
+          href={value}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-2 text-sm text-indigo-500 hover:underline dark:text-indigo-400"
+        >
+          {value}
+        </a>
+        <button
+          onClick={() => onChange("")}
+          className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-white shadow-sm"
+          type="button"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
       <div>
-        <UploadDropzone
-          appearance={{
-            container: `rounded-full border-dashed border-gray-500 border-4 focus:outline-none relative p-0 m-0 box-content
-              ${
-                isDropped
-                  ? "border-none h-[100px] w-[100px]"
-                  : "h-[92px] w-[92px]"
-              }`,
-            allowedContent: {
-              display: "none",
-            },
-            label: cn(
-              "p-0 m-0 font-extrabold text-gray-800 flex items-center justify-center",
-              { hidden: isDropped },
-            ),
-            button: cn(
-              "rounded-full bg-gray-600 opacity-50 absolute top-0 left-0 p-0 m-0 hover:opacity-100 transition-all duration-200",
-              isDropped ? "border-none h-[100px] w-[100px]" : "h-24 w-24",
-            ),
-          }}
-          content={{
-            label(arg) {
-              return <span className="mt-[-5px] tracking-tighter">UPLOAD</span>;
-            },
-            uploadIcon() {
-              return (
-                <MdPhotoCamera
-                  size={36}
-                  className={cn("m-0 p-0 text-gray-600", { hidden: isDropped })}
-                  icon
-                />
-              );
-            },
-            button() {
-              setIsDropped(true);
-              return <Upload size={36} strokeWidth={3} className="m-0 p-0" />;
-            },
-          }}
-          endpoint={endpoint}
-          onClientUploadComplete={(res) => {
-            onChange(res?.[0].url);
-          }}
-          onUploadError={(error: Error) => {
-            console.error(error);
-          }}
-        />
-      </div>
-      <div className="absolute right-0 top-0 m-1 h-8 w-8 rounded-full bg-white p-0">
-        <FaCirclePlus
-          size={25}
-          className="absolute right-0 top-0 mr-1 mt-1 text-blue-600"
-        />
+        {endpoint === "serverImage" && (
+          <>
+            <UploadDropzone
+              appearance={{
+                container: `rounded-full border-dashed border-gray-500 border-4 focus:outline-none relative p-0 m-0 box-content
+              ${isDropped
+                    ? "border-none h-[100px] w-[100px]"
+                    : "h-[92px] w-[92px]"
+                  }`,
+                allowedContent: {
+                  display: "none",
+                },
+                label: cn(
+                  "p-0 m-0 font-extrabold text-gray-800 flex items-center justify-center",
+                  { hidden: isDropped },
+                ),
+                button: cn(
+                  "rounded-full bg-gray-600 opacity-50 absolute top-0 left-0 p-0 m-0 hover:opacity-100 transition-all duration-200",
+                  isDropped ? "border-none h-[100px] w-[100px]" : "h-24 w-24",
+                ),
+              }}
+              content={{
+                label(arg) {
+                  return (
+                    <span className="mt-[-5px] tracking-tighter">UPLOAD</span>
+                  );
+                },
+                uploadIcon() {
+                  return (
+                    <MdPhotoCamera
+                      size={36}
+                      className={cn("m-0 p-0 text-gray-600", {
+                        hidden: isDropped,
+                      })}
+                      icon
+                    />
+                  );
+                },
+                button() {
+                  setIsDropped(true);
+                  return (
+                    <Upload size={36} strokeWidth={3} className="m-0 p-0" />
+                  );
+                },
+              }}
+              endpoint={endpoint}
+              onClientUploadComplete={(res) => {
+                onChange(res?.[0].url);
+              }}
+              onUploadError={(error: Error) => {
+                console.error(error);
+              }}
+            />
+            <div className="absolute right-0 top-0 m-1 h-8 w-8 rounded-full bg-white p-0">
+              <FaCirclePlus
+                size={25}
+                className="absolute right-0 top-0 mr-1 mt-1 text-blue-600"
+              />
+            </div>
+          </>
+        )}
+        {endpoint === "messageFile" && (
+          <UploadDropzone
+            endpoint={endpoint}
+            onClientUploadComplete={(res) => {
+              onChange(res?.[0].url);
+            }}
+            onUploadError={(error: Error) => {
+              console.log(error);
+            }}
+          />
+        )}
       </div>
     </div>
   );

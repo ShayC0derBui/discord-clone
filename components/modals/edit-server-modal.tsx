@@ -23,10 +23,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import FileUpload from "../file-upload"; 
-import { Button } from "../ui/button";             
+import FileUpload from "../file-upload";
+import { Button } from "../ui/button";
 import { useEffect } from "react";
-
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -57,7 +56,7 @@ export const EditServerModal = () => {
       form.setValue("name", server.name);
       form.setValue("imageUrl", server.imageUrl);
     }
-  }, [server,form])
+  }, [server, form]);
 
   const isLoading = form.formState.isSubmitting;
 
@@ -70,7 +69,7 @@ export const EditServerModal = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const handleClose = () => {
     form.reset();
@@ -119,8 +118,11 @@ export const EditServerModal = () => {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoSave="off"
+                        autoComplete="off"
                         disabled={isLoading}
-                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0
+                          focus-visible:ring-offset-0"
                         placeholder="Enter server name"
                         {...field}
                       ></Input>
@@ -131,11 +133,7 @@ export const EditServerModal = () => {
               />
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button
-                variant="primary"
-                disabled={isLoading}
-                className="w-full"
-              >
+              <Button variant="primary" disabled={isLoading} className="w-full">
                 Save
               </Button>
             </DialogFooter>

@@ -26,8 +26,6 @@ import * as z from "zod";
 import FileUpload from "../file-upload";
 import { Button } from "../ui/button";
 
-
-
 const formSchema = z.object({
   name: z.string().min(1, {
     message: "Server name is required.",
@@ -111,8 +109,11 @@ export const CreateServerModal = () => {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        autoSave="off"
+                        autoComplete="off"
                         disabled={isLoading}
-                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0
+                          focus-visible:ring-offset-0"
                         placeholder="Enter server name"
                         {...field}
                       ></Input>
@@ -123,11 +124,7 @@ export const CreateServerModal = () => {
               />
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button
-                variant="primary"
-                disabled={isLoading}
-                className="w-full"
-              >
+              <Button variant="primary" disabled={isLoading} className="w-full">
                 Create
               </Button>
             </DialogFooter>
