@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/use-modal-store";
 import { EmojiPicker } from "@/components/emoji-picker";
 import { cn } from "@/lib/utils";
-import { useChatInputStore } from "@/hooks/use-chat-input-store";
+import { useChatInputStore } from "@/hooks/use-chat-input";
 
 interface ChatInputProps {
   apiUrl: string;

@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
+import { useChatInputStore } from "@/hooks/use-chat-input";
 
 interface ChatItemProps {
   id: string;
@@ -102,7 +103,6 @@ export const ChatItem = ({
       });
 
       axios.patch(url, data);
-
       form.reset();
       setIsEditing(false);
     } catch (error) {

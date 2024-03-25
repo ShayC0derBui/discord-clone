@@ -8,7 +8,7 @@ import { ElementRef, Fragment, useEffect, useRef, useState } from "react";
 import { ChatItem } from "./chat-item";
 import { format } from "date-fns";
 import { useChatSocket } from "@/hooks/use-chat-socket";
-import { useChatInputStore } from "@/hooks/use-chat-input-store";
+import { useChatScroll } from "@/hooks/use-chat-scroll";
 
 const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
@@ -54,39 +54,13 @@ export const ChatMessages = ({
     });
 
   useChatSocket({ addKey, updateKey, queryKey });
-  const dataReceived = useRef<boolean>(false);
-  const { newDataEntered, setNewDataEntered } = useChatInputStore();
-  const scrollToBottom = () => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
-  };
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null; // Initialize intervalId as null
-
-    const checkDataReceived = () => {
-      if (dataReceived.current) {
-        setNewDataEntered(false);
-        scrollToBottom();
-        dataReceived.current = false;
-        clearInterval(intervalId!); // Clear interval when data is received
-      }
-    };
-
-    if (newDataEntered) {
-      dataReceived.current = false;
-      intervalId = setInterval(checkDataReceived, 100); // Start interval
-    }
-
-    return () => {
-      // Cleanup function to clear interval when component unmounts or newDataEntered changes
-      clearInterval(intervalId!);
-    };
-  }, [newDataEntered, setNewDataEntered]);
-
-  useEffect(() => {
-    dataReceived.current = true;
-  }, [data]);
+  useChatScroll({
+    chatRef,
+    bottomRef,
+    loadMore: fetchNextPage,
+    shouldLoadMore: !isFetchingNextPage && !!hasNextPage,
+    count: data?.pages?.[0]?.items?.length ?? 0,
+  });
 
   if (status === "pending") {
     return (
