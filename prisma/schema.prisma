@@ -1,21 +1,19 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "cockroachdb"
+  url = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Profile {
   id String @id @default(uuid())
   userId String @unique
   name String
-  imageUrl String @db.Text
-  email String @db.Text
+  imageUrl String @db.String(65535)
+  email String @db.String(65535)
 
   servers Server[]
   members Member[]
@@ -28,7 +26,7 @@ model Profile {
 model Server {
   id String @id @default(uuid())
   name String
-  imageUrl String @db.Text
+  imageUrl String @db.String(65535)
   inviteCode String @unique
 
   profileId String
@@ -100,9 +98,9 @@ model Channel {
 
 model Message {
   id String @id @default(uuid())
-  content String @db.Text
+  content String @db.String(65535)
 
-  fileUrl String? @db.Text
+  fileUrl String? @db.String(65535)
 
   memberId String
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
@@ -137,8 +135,8 @@ model Conversation {
 
 model DirectMessage {
   id String @id @default(uuid())
-  content String @db.Text
-  fileUrl String? @db.Text
+  content String @db.String(65535)
+  fileUrl String? @db.String(65535)
 
   memberId String
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)

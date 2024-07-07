@@ -1,8 +1,9 @@
+import { NextApiRequest } from "next";
+import { MemberRole } from "@prisma/client";
+
+import { NextApiResponseServerIo } from "@/types";
 import { currentProfilePages } from "@/lib/current-profile-pages";
 import { db } from "@/lib/db";
-import { NextApiResponseServerIo } from "@/types";
-import { MemberRole } from "@prisma/client";
-import { NextApiRequest } from "next";
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,11 +19,11 @@ export default async function handler(
     const { content } = req.body;
 
     if (!profile) {
-      return res.status(401).json({ error: "Unauthorised" });
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
     if (!conversationId) {
-      return res.status(400).json({ error: "Conversation ID is required" });
+      return res.status(400).json({ error: "Conversation ID missing" });
     }
 
     const conversation = await db.conversation.findFirst({
@@ -32,36 +33,34 @@ export default async function handler(
           {
             memberOne: {
               profileId: profile.id,
-            },
+            }
           },
           {
             memberTwo: {
               profileId: profile.id,
-            },
-          },
-        ],
+            }
+          }
+        ]
       },
       include: {
         memberOne: {
           include: {
             profile: true,
-          },
+          }
         },
         memberTwo: {
           include: {
             profile: true,
-          },
-        },
-      },
-    });
+          }
+        }
+      }
+    })
+
     if (!conversation) {
       return res.status(404).json({ error: "Conversation not found" });
     }
 
-    const member =
-      conversation.memberOne.profileId === profile.id
-        ? conversation.memberOne
-        : conversation.memberTwo;
+    const member = conversation.memberOne.profileId === profile.id ? conversation.memberOne : conversation.memberTwo;
 
     if (!member) {
       return res.status(404).json({ error: "Member not found" });
@@ -76,22 +75,22 @@ export default async function handler(
         member: {
           include: {
             profile: true,
-          },
-        },
-      },
-    });
+          }
+        }
+      }
+    })
 
     if (!directMessage || directMessage.deleted) {
       return res.status(404).json({ error: "Message not found" });
     }
 
-    const isMessageOwner = directMessage.member.id === member.id;
+    const isMessageOwner = directMessage.memberId === member.id;
     const isAdmin = member.role === MemberRole.ADMIN;
     const isModerator = member.role === MemberRole.MODERATOR;
-    const canModify = isAdmin || isModerator || isMessageOwner;
+    const canModify = isMessageOwner || isAdmin || isModerator;
 
     if (!canModify) {
-      return res.status(401).json({ error: "Unauthorised" });
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
     if (req.method === "DELETE") {
@@ -108,15 +107,17 @@ export default async function handler(
           member: {
             include: {
               profile: true,
-            },
-          },
-        },
-      });
+            }
+          }
+        }
+      })
     }
+
     if (req.method === "PATCH") {
       if (!isMessageOwner) {
-        return res.status(401).json({ error: "Unauthorised" });
+        return res.status(401).json({ error: "Unauthorized" });
       }
+
       directMessage = await db.directMessage.update({
         where: {
           id: directMessageId as string,
@@ -128,10 +129,10 @@ export default async function handler(
           member: {
             include: {
               profile: true,
-            },
-          },
-        },
-      });
+            }
+          }
+        }
+      })
     }
 
     const updateKey = `chat:${conversation.id}:messages:update`;
@@ -141,6 +142,6 @@ export default async function handler(
     return res.status(200).json(directMessage);
   } catch (error) {
     console.log("[MESSAGE_ID]", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal Error" });
   }
 }

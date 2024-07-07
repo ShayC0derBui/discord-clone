@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useChatInputStore } from "./use-chat-input";
-import { log } from "console";
 
 type ChatScrollProps = {
   chatRef: React.RefObject<HTMLDivElement>;
@@ -18,7 +16,6 @@ export const useChatScroll = ({
   count,
 }: ChatScrollProps) => {
   const [hasInitialized, setHasInitialized] = useState(false);
-  const { newDataEntered, setNewDataEntered } = useChatInputStore();
 
   useEffect(() => {
     const topDiv = chatRef?.current;
@@ -27,7 +24,7 @@ export const useChatScroll = ({
       const scrollTop = topDiv?.scrollTop;
 
       if (scrollTop === 0 && shouldLoadMore) {
-        loadMore();
+        loadMore()
       }
     };
 
@@ -35,38 +32,32 @@ export const useChatScroll = ({
 
     return () => {
       topDiv?.removeEventListener("scroll", handleScroll);
-    };
-  }, [chatRef, loadMore, shouldLoadMore]);
+    }
+  }, [shouldLoadMore, loadMore, chatRef]);
 
   useEffect(() => {
     const bottomDiv = bottomRef?.current;
-    const topDiv = chatRef?.current;
+    const topDiv = chatRef.current;
     const shouldAutoScroll = () => {
       if (!hasInitialized && bottomDiv) {
         setHasInitialized(true);
         return true;
       }
+
       if (!topDiv) {
         return false;
       }
 
-      const distanceFromBottome =
-        topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight;
-      return distanceFromBottome <= 100;
-    };
+      const distanceFromBottom = topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight;
+      return distanceFromBottom <= 100;
+    }
 
-    if (shouldAutoScroll() || newDataEntered) {
+    if (shouldAutoScroll()) {
       setTimeout(() => {
-        bottomDiv?.scrollIntoView({ behavior: "smooth" });
-        setNewDataEntered(false);
+        bottomRef.current?.scrollIntoView({
+          behavior: "smooth",
+        });
       }, 100);
     }
-  }, [
-    bottomRef,
-    count,
-    chatRef,
-    hasInitialized,
-    newDataEntered,
-    setNewDataEntered,
-  ]);
-};
+  }, [bottomRef, chatRef, count, hasInitialized]);
+}

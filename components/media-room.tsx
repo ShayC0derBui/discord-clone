@@ -11,39 +11,43 @@ interface MediaRoomProps {
   chatId: string;
   video: boolean;
   audio: boolean;
-}
+};
 
-export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
+export const MediaRoom = ({
+  chatId,
+  video,
+  audio
+}: MediaRoomProps) => {
   const { user } = useUser();
   const [token, setToken] = useState("");
 
   useEffect(() => {
-    if (!user?.firstName) return;
+    if (!user?.firstName || !user?.lastName) return;
 
-    const lastName = user.lastName || "";
-    const name = `${user.firstName} ${lastName}`;
+    const name = `${user.firstName} ${user.lastName}`;
 
-    const tokenFetch = async () => {
+    (async () => {
       try {
-        const resp = await fetch(
-          `/api/livekit?room=${chatId}&username=${name}`,
-        );
+        const resp = await fetch(`/api/livekit?room=${chatId}&username=${name}`);
         const data = await resp.json();
         setToken(data.token);
       } catch (e) {
         console.log(e);
       }
-    };
-    tokenFetch();
-  }, [user?.firstName, user?.lastName, chatId, user]);
+    })()
+  }, [user?.firstName, user?.lastName, chatId]);
 
   if (token === "") {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center">
-        <Loader2 className="my-4 h-7 w-7 animate-spin text-zinc-500" />
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Loading...</p>
+      <div className="flex flex-col flex-1 justify-center items-center">
+        <Loader2
+          className="h-7 w-7 text-zinc-500 animate-spin my-4"
+        />
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Loading...
+        </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -57,5 +61,5 @@ export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
     >
       <VideoConference />
     </LiveKitRoom>
-  );
-};
+  )
+}

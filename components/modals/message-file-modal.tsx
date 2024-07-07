@@ -14,16 +14,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { FileUpload } from "@/components/file-upload";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
-import FileUpload from "../file-upload";
 
 const formSchema = z.object({
   fileUrl: z.string().min(1, {
-    message: "Attachment is required.",
-  }),
+    message: "Attachment is required."
+  })
 });
 
 export const MessageFileModal = () => {
@@ -37,13 +42,13 @@ export const MessageFileModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       fileUrl: "",
-    },
+    }
   });
 
   const handleClose = () => {
     form.reset();
     onClose();
-  };
+  }
 
   const isLoading = form.formState.isSubmitting;
 
@@ -65,13 +70,13 @@ export const MessageFileModal = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="overflow-hidden bg-white p-0 text-black">
-        <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-center text-2xl font-bold">
+      <DialogContent className="bg-white text-black p-0 overflow-hidden">
+        <DialogHeader className="pt-8 px-6">
+          <DialogTitle className="text-2xl text-center font-bold">
             Add an attachment
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
@@ -100,7 +105,7 @@ export const MessageFileModal = () => {
               </div>
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button variant="primary" disabled={isLoading} className="w-full">
+              <Button variant="primary" disabled={isLoading}>
                 Send
               </Button>
             </DialogFooter>
@@ -108,5 +113,5 @@ export const MessageFileModal = () => {
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

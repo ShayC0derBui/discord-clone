@@ -1,25 +1,27 @@
-import { currentProfile } from "@/lib/current-profile";
-import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function PATCH(
+import { currentProfile } from "@/lib/current-profile";
+import { db } from "@/lib/db";
+
+export async function DELETE(
   req: Request,
-  {params}: {params: {memberId: string}}
+  { params }: { params: { memberId: string } }
 ) {
-  try { 
+  try {
     const profile = await currentProfile();
     const { searchParams } = new URL(req.url);
-    const { role } = await req.json();
-    
+
     const serverId = searchParams.get("serverId");
 
-    if(!profile) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!profile) {
+      return new NextResponse("Unauthorized" ,{ status: 401 });
     }
-    if(!serverId) {
+
+    if (!serverId) {
       return new NextResponse("Server ID missing", { status: 400 });
     }
-    if(!params.memberId) {
+
+    if (!params.memberId) {
       return new NextResponse("Member ID missing", { status: 400 });
     }
 
@@ -30,15 +32,10 @@ export async function PATCH(
       },
       data: {
         members: {
-          update: {
-            where: {
-              id: params.memberId,
-              profileId: {
-                not: profile.id,
-              }
-            },
-            data: {
-              role
+          deleteMany: {
+            id: params.memberId,
+            profileId: {
+              not: profile.id
             }
           }
         }
@@ -51,26 +48,25 @@ export async function PATCH(
           orderBy: {
             role: "asc",
           }
-        }
-      }
+        },
+      },
     });
 
     return NextResponse.json(server);
-
-  }
-  catch (err) { 
-    console.log("[MEMBERS_ID_PATCH]: ", err);
+  } catch (error) {
+    console.log("[MEMBER_ID_DELETE]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
 
-export async function DELETE(
+export async function PATCH(
   req: Request,
-  { params }: { params: { memberId: string } },
+  { params }: { params: { memberId: string } }
 ) {
   try {
     const profile = await currentProfile();
     const { searchParams } = new URL(req.url);
+    const { role } = await req.json();
 
     const serverId = searchParams.get("serverId");
 
@@ -93,13 +89,18 @@ export async function DELETE(
       },
       data: {
         members: {
-          deleteMany: {
-            id: params.memberId,
-            profileId: {
-              not: profile.id,
+          update: {
+            where: {
+              id: params.memberId,
+              profileId: {
+                not: profile.id
+              }
             },
-          },
-        },
+            data: {
+              role
+            }
+          }
+        }
       },
       include: {
         members: {
@@ -107,15 +108,15 @@ export async function DELETE(
             profile: true,
           },
           orderBy: {
-            role: "asc",
-          },
-        },
-      },
+            role: "asc"
+          }
+        }
+      }
     });
 
     return NextResponse.json(server);
   } catch (error) {
-    console.log("[MEMBER_ID_DELETE]", error);
+    console.log("[MEMBERS_ID_PATCH]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
